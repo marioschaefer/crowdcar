@@ -4,6 +4,7 @@ import os
 import csv
 from time import sleep
 
+# to to True to disable import of w1thermsensor
 devenv = True
 filename = 'temps.csv'
 if not devenv:

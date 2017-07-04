@@ -4,7 +4,7 @@ import os
 import csv
 from time import sleep
 
-# to to True to disable import of w1thermsensor
+# set to True to disable import of w1thermsensor
 devenv = True
 filename = 'temps.csv'
 if not devenv:
@@ -40,6 +40,7 @@ class CsvWriter:
                 raise exc
 
 
+print("Getting sensors")
 sensors = []
 file = None
 try:
@@ -50,12 +51,18 @@ except Exception as exc:
     print("Error while getting available sensors: %s" % exc)
     exit(99)
 
+if len(sensors) < 1:
+    print("no sensors found, exit")
+    exit(97)
+
+print("opening file for data saving")
 try:
     file = CsvWriter(filename, sensors)
 except Exception as exc:
     print("Error while opening file(%s) for writing: %s" % (filename, exc))
     exit(98)
 
+print("file opened, start reading temps")
 while True:
     tempreading = {}
     for sensorid in sensors:

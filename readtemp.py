@@ -13,6 +13,12 @@ if not devenv:
 
 class CsvWriter:
     def __init__(self, filename, header):
+        """
+        :param filename: 
+        :type filename: 
+        :param header: 
+        :type header: 
+        """
         self.filename = filename
         self.header = header
         self.filepointer = None
@@ -20,6 +26,10 @@ class CsvWriter:
         self._openfp()
 
     def _openfp(self):
+        """
+        :return: 
+        :rtype: 
+        """
         try:
             fp = open(os.path.join(os.path.dirname(__file__), self.filename), 'w+', newline='')
             self.filepointer = csv.DictWriter(fp, fieldnames=self.header, delimiter=';', quoting=csv.QUOTE_ALL,
@@ -29,10 +39,22 @@ class CsvWriter:
             raise exc
 
     def closefp(self):
+        """
+        
+        :return: 
+        :rtype: 
+        """
         if self.filepointer:
             self.filepointer.close()
 
     def writetempline(self, line):
+        """
+        
+        :param line: 
+        :type line: 
+        :return: 
+        :rtype: 
+        """
         if self.filepointer:
             try:
                 self.filepointer.writerow(line)

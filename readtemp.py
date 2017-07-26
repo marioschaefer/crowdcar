@@ -5,6 +5,8 @@ import csv
 from time import sleep
 from datetime import datetime
 import RPi.GPIO as GPIO
+import lcddriver
+import random
 
 
 # set to True to disable import of w1thermsensor
@@ -15,6 +17,7 @@ displaypage = 1
 displaymaxpage = 3
 maxtemp = 30
 filename = datetime.now().strftime("%Y%m%d_%H%M%S_") + 'tempreadings.csv'
+
 if not devenv:
     from w1thermsensor import W1ThermSensor
 
@@ -107,6 +110,15 @@ def main():
     sleep(1)
     GPIO.output(gpiowarningled, False)
 
+    print("setting up LCD-Display(s)")
+    try:
+        lcd1 = lcddriver.lcd(0x3f)
+        lcd1.lcd_clear()
+        # lcd2 = lcddriver.lcd(0x3d)
+    except:
+        print("failed settung up displays - exiting")
+        exit(94)
+
     print("Getting sensors")
     sensors = ["readtime"]
     file = None
@@ -132,6 +144,7 @@ def main():
     print("file opened, start reading temps")
     while True:
         tempreading = {}
+        temp = 0
         maxtempexceeded = False
         for sensorid in sensors:
             if sensorid == "readtime":
@@ -151,6 +164,16 @@ def main():
             else:
                 print("Sensor %s has temp: %.2f" % (sensorid, temp))
             tempreading[sensorid] = temp
+
+        try:
+            # TODO: change from randomfloat to actual tempreadings
+            # TODO: maybe show only 6 highest temps, and on button click change to all temps
+            lcd1.lcd_display_string("H: %.0f %.0f %.0f %.0f %.0f %.0f" % (random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60)), 1)
+            lcd1.lcd_display_string("L: %.0f %.0f %.0f %.0f %.0f %.0f" % (random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60)), 2)
+            lcd1.lcd_display_string("R: %.0f %.0f %.0f %.0f %.0f %.0f" % (random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60)), 3)
+            lcd1.lcd_display_string("V: %.0f %.0f %.0f %.0f %.0f %.0f" % (random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60), random.uniform(10, 60)), 4)
+        except:
+            print("failed to write temp to display")
 
         try:
             file.writetempline(tempreading)
